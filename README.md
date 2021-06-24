@@ -67,7 +67,7 @@ Linebot作為機器人將會進到你的群組聊天室內讀取訊息
     按下最右方的黑色 **Issue** 按鈕，並複製亂碼  
     完整複製那一串亂碼，並回到 Heroku config vars 的分頁  
     在右側的 **VALUE** 欄位貼上後亂碼後  
-    在左側的 **KEY** 欄位貼上 `channel_access_token` 並按 **Add**
+    在左側的 **KEY** 欄位貼上 `channel_access_token` 並按 **Add**  
     (先不要關頁面，等等需要用到)
 
 1. 接下來到 [這個網站](https://django-secret-key-generator.netlify.app/) 按 **Copy to clipboard** 複製那串亂碼  
@@ -76,10 +76,10 @@ Linebot作為機器人將會進到你的群組聊天室內讀取訊息
   在左側的 **KEY** 欄位貼上 `SECRET_KEY` 並按 **Add**
 
 1. 接下來到你要傳送line訊息的discord伺服器(你必須要有管理員身分)  
-  到 **伺服器設定** -> **整合** -> **Webhook** -> **新Webhook**
+  到 **伺服器設定** -> **整合** -> **Webhook** -> **新Webhook**  
   頻道設定為你要傳送訊息的的頻道後  
-  按下 **複製Webhook網址** 並回到 Heroku config vars 的分頁
-  在右側的 VALUE 欄位貼上後網址後
+  按下 **複製Webhook網址** 並回到 Heroku config vars 的分頁  
+  在右側的 VALUE 欄位貼上後網址後  
   在左側的 KEY 欄位貼上 `discohook` 並按 Add
 
 1. 切換 Heroku config vars 的分頁到 Deploy  
@@ -102,18 +102,18 @@ Linebot作為機器人將會進到你的群組聊天室內讀取訊息
   (這可能要等一段時間)
 
 1. 當顯示 **Your app was successfully deployed.** 後  
-  按下頁面右上方的 **Open app** 並複製 URL
+  按下頁面右上方的 **Open app** 並複製 URL  
   (Not Found 是正常的)
  
 1. 回到 Line Developers 的 **Messaging API**  
   往上找到 **Webhook URL**  
   將剛剛複製的網址貼上後 **後方再加上 `/webhook/`**  
-  (也就是說長這樣 : `https://app-name.herokuapp.com/webhook/`)
+  (也就是說長這樣 : `https://app-name.herokuapp.com/webhook/`)  
   並將下方 **Use webhook** 打開
 
 1. 點選 **Allow bot to join group chats**  
   在新頁面 **功能切換** -> **加入群組或多人聊天室** 勾選下面的 **接受**
 
-1. **最~後~**
-  複製 **帳號資訊** -> **基本ID** 旁邊的 @xxxxxxx 並加到你的群組就完成了!!
+1. **最後**  
+  複製 **帳號資訊** -> **基本ID** 旁邊的 @xxxxxxx 並加到你的群組就完成了!!  
   沒有意外的話啦 **(´。＿。｀)**
