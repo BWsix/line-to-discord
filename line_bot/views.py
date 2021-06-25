@@ -54,10 +54,10 @@ def get_binary(event):
 
 
 def tmp_blocker(event, data, files=None, url=discohook):
-  if event.source.type == 'user':
-    return
+  # if event.source.type == 'user':
+  #   return
 
-  print(event.source.type)
+  # print(event.source.type)
 
   post(discohook, data=data, files=files)
 
