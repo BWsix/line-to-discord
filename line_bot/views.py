@@ -59,7 +59,6 @@ def tmp_blocker(event, data, files=None, url=discohook):
   except Exception:
     return
 
-  print(event.source.group_id)
   post(discohook, data=data, files=files)
 
 
@@ -75,7 +74,7 @@ def handle_image(event):
   profile = get_profile(event)
   file = get_binary(event)
   
-  return post(event, profile, files={'media.jpg':file})
+  return tmp_blocker(event, profile, files={'media.jpg':file})
 
 
 @handler.add(MessageEvent, message=VideoMessage)
@@ -83,7 +82,7 @@ def handle_video(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return post(event, profile, files={'media.mp4':file})
+  return tmp_blocker(event, profile, files={'media.mp4':file})
 
 
 @handler.add(MessageEvent, message=AudioMessage)
@@ -91,7 +90,7 @@ def handle_audio(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return post(event, profile, files={'media.mp3':file})
+  return tmp_blocker(event, profile, files={'media.mp3':file})
 
 
 @handler.add(MessageEvent, message=FileMessage)
@@ -99,25 +98,25 @@ def hendle_file(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return post(event, profile, files={event.message.file_name:file})
+  return tmp_blocker(event, profile, files={event.message.file_name:file})
 
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker(event):
   profile = get_profile(event, "**(sticker)**")
 
-  return post(event, profile)
+  return tmp_blocker(event, profile)
 
 
 @handler.add(FollowEvent)
 def handle_follow(event):
   profile = get_profile(event, "**(joined the group)**")
   
-  return post(event, profile)
+  return tmp_blocker(event, profile)
 
 
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
   profile = get_profile(event, "**(left the group)**")
 
-  return post(event, profile)
+  return tmp_blocker(event, profile)
