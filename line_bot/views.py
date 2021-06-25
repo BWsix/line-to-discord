@@ -53,20 +53,11 @@ def get_binary(event):
   return file
 
 
-def tmp_blocker(event, data, files=None, url=discohook):
-  # if event.source.type == 'user':
-  #   return
-
-  # print(event.source.type)
-
-  post(discohook, data=data, files=files)
-
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
   profile = get_profile(event, event.message.text)
-
-  return tmp_blocker(event, profile)
+  
+  post(discohook, data=profile)
 
 
 @handler.add(MessageEvent, message=ImageMessage)
@@ -74,7 +65,7 @@ def handle_image(event):
   profile = get_profile(event)
   file = get_binary(event)
   
-  return tmp_blocker(event, profile, files={'media.jpg':file})
+  post(discohook, profile, files={'media.jpg':file})
 
 
 @handler.add(MessageEvent, message=VideoMessage)
@@ -82,7 +73,7 @@ def handle_video(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return tmp_blocker(event, profile, files={'media.mp4':file})
+  post(discohook, profile, files={'media.mp4':file})
 
 
 @handler.add(MessageEvent, message=AudioMessage)
@@ -90,7 +81,7 @@ def handle_audio(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return tmp_blocker(event, profile, files={'media.mp3':file})
+  post(discohook, profile, files={'media.mp3':file})
 
 
 @handler.add(MessageEvent, message=FileMessage)
@@ -98,25 +89,25 @@ def hendle_file(event):
   profile = get_profile(event)
   file = get_binary(event)
 
-  return tmp_blocker(event, profile, files={event.message.file_name:file})
+  post(discohook, profile, files={event.message.file_name:file})
 
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker(event):
   profile = get_profile(event, "**(sticker)**")
 
-  return tmp_blocker(event, profile)
+  post(discohook, data=profile)
 
 
 @handler.add(FollowEvent)
 def handle_follow(event):
   profile = get_profile(event, "**(joined the group)**")
   
-  return tmp_blocker(event, profile)
+  post(discohook, data=profile)
 
 
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
   profile = get_profile(event, "**(left the group)**")
 
-  return tmp_blocker(event, profile)
+  post(discohook, data=profile)
