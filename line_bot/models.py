@@ -14,4 +14,4 @@ class Hook(models.Model):
   url = models.CharField(max_length=150, null=True)
 
   def __str__(self):
-    return f'"{self.name}" from "{self.owner}"'
+    return f'from "{self.owner}" to "{self.name}" '
