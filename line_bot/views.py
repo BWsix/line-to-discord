@@ -4,8 +4,8 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
 from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from linebot.models.events import FollowEvent, UnfollowEvent
 from linebot.models.messages import AudioMessage, FileMessage, ImageMessage, StickerMessage, VideoMessage
 
@@ -34,12 +34,29 @@ def webhook(request: HttpRequest):
   
 
 def get_profile(event, content=None):
-  profile = line_bot_api.get_profile(event.source.user_id)
+  if event.source.type == 'user':
+    return line_bot_api.reply_message(
+      event.reply_token,
+      TextSendMessage(text="hi, I'm an epico messenger😎"))
+
+
+  try:
+    profile = line_bot_api.get_profile(event.source.user_id)
+    username = profile.display_name
+    avatar_url = profile.picture_url
+  except LineBotApiError:
+    try:
+      summary = line_bot_api.get_group_summary(event.source.group_id)
+      username = f"unknown(from {summary.group_name})"
+      avatar_url = summary.picture_url
+    except LineBotApiError:
+      username = "unknown"
+      avatar_url = None
   
   return {
     'content' : content,
-    'username' : profile.display_name,
-    'avatar_url' : profile.picture_url,
+    'username' : username,
+    'avatar_url' : avatar_url,
   }
 
 
