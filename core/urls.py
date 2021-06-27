@@ -13,12 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.http.response import HttpResponse
 from django.contrib import admin
 from django.urls import path
 
-from line_bot.views import webhook
+from line_bot.webhook import webhook
 
 urlpatterns = [
     path('webhook/', webhook),
     path('admin/', admin.site.urls),
 ]
+
+def err404(request, exception):
+  return HttpResponse('''
+    <script>
+      document.location.href = "https://github.com/BWsix/line-to-discord";
+    </script>
+  ''')
+
+handler404 = err404
