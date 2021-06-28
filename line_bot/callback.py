@@ -3,12 +3,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse, HttpResponseBadRequest
 
-from .commands import Commands, line_bot_api, handler
-
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import *
 
+from .commands import Commands, line_bot_api, handler
+from .scripts import scripts
+
 cmd = Commands()
+scripts = scripts()
 
 @csrf_exempt
 @require_POST
@@ -118,14 +120,24 @@ def hendle_file(event):
 
   cmd.post(event, data=request_data, files={event.message.file_name:file})
 
-@handler.add(FollowEvent)
-def handle_follow(event):
+@handler.add(MemberJoinedEvent)
+def handle_member_joined(event):
   request_data = create_request_data(event, "**(joined the group)**")
   
   cmd.post(event, data=request_data)
 
-@handler.add(UnfollowEvent)
-def handle_unfollow(event):
+@handler.add(MemberLeftEvent)
+def handle_member_left(event):
   request_data = create_request_data(event, "**(left the group)**")
 
   cmd.post(event, data=request_data)
+
+@handler.add(JoinEvent)
+def handle_join(event):
+  content = scripts.welcome()
+
+  return reply_line(event, content)
+
+@handler.add(LeaveEvent)
+def handle_leave(event):
+  cmd.handle_delete(event)
