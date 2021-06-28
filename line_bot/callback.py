@@ -6,15 +6,13 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from .commands import Commands, line_bot_api, handler
 
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from linebot.models.events import FollowEvent, UnfollowEvent
-from linebot.models.messages import AudioMessage, FileMessage, ImageMessage, StickerMessage, VideoMessage
+from linebot.models import *
 
 cmd = Commands()
 
 @csrf_exempt
 @require_POST
-def webhook(request: HttpRequest):
+def callback(request: HttpRequest):
   signature = request.headers["X-Line-Signature"]
   body = request.body.decode()
 
@@ -32,10 +30,10 @@ def reply_line(event, content):
     TextSendMessage(text=content)
   )
 
-def get_profile(event, content=None):
+def create_request_data(event, content=None) -> dict:
   try:
-    profile = line_bot_api.get_profile(event.source.user_id)
-    username = profile.display_name
+    request_data = line_bot_api.get_group_member_profile(event.source.group_id, event.source.user_id)
+    username = request_data.display_name
   except LineBotApiError:
     username = "unknown"
 
@@ -77,55 +75,57 @@ def handle_message(event):
     return cmd.handle_unlink(event)
   if event.message.text == 'discoquery':
     return cmd.handle_query(event)
+  if event.message.text == 'discohelp':
+    return cmd.handle_help(event)
   
 
-  profile = get_profile(event, event.message.text)
+  request_data = create_request_data(event, event.message.text)
   
-  cmd.post(event, data=profile)
+  cmd.post(event, data=request_data)
 
 
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_sticker(event):
-  profile = get_profile(event, "**(sticker)**")
+  request_data = create_request_data(event, "**(sticker)**")
 
-  cmd.post(event, data=profile)
+  cmd.post(event, data=request_data)
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
-  profile = get_profile(event)
+  request_data = create_request_data(event)
   file = get_binary(event)
   
-  cmd.post(event, data=profile, files={'media.jpg':file})
+  cmd.post(event, data=request_data, files={'media.jpg':file})
 
 @handler.add(MessageEvent, message=VideoMessage)
 def handle_video(event):
-  profile = get_profile(event)
+  request_data = create_request_data(event)
   file = get_binary(event)
 
-  cmd.post(event, data=profile, files={'media.mp4':file})
+  cmd.post(event, data=request_data, files={'media.mp4':file})
 
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio(event):
-  profile = get_profile(event)
+  request_data = create_request_data(event)
   file = get_binary(event)
 
-  cmd.post(event, data=profile, files={'media.mp3':file})
+  cmd.post(event, data=request_data, files={'media.mp3':file})
 
 @handler.add(MessageEvent, message=FileMessage)
 def hendle_file(event):
-  profile = get_profile(event)
+  request_data = create_request_data(event)
   file = get_binary(event)
 
-  cmd.post(event, data=profile, files={event.message.file_name:file})
+  cmd.post(event, data=request_data, files={event.message.file_name:file})
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-  profile = get_profile(event, "**(joined the group)**")
+  request_data = create_request_data(event, "**(joined the group)**")
   
-  cmd.post(event, data=profile)
+  cmd.post(event, data=request_data)
 
 @handler.add(UnfollowEvent)
 def handle_unfollow(event):
-  profile = get_profile(event, "**(left the group)**")
+  request_data = create_request_data(event, "**(left the group)**")
 
-  cmd.post(event, data=profile)
+  cmd.post(event, data=request_data)

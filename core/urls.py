@@ -17,10 +17,10 @@ from django.http.response import HttpResponse
 from django.contrib import admin
 from django.urls import path
 
-from line_bot.webhook import webhook
+from line_bot.callback import callback
 
 urlpatterns = [
-    path('webhook/', webhook),
+    path('callback/', callback),
     path('admin/', admin.site.urls),
 ]
 
