@@ -12,8 +12,8 @@ environ.Env.read_env()
 line_bot_api = LineBotApi(env('channel_access_token'))
 handler = WebhookHandler(env('channel_secret'))
 
-
-SITE = "https://github.com/BWsix/line-to-discord"
+from .scripts import scripts
+scripts = scripts()
 
 
 class Commands:
@@ -36,7 +36,7 @@ class Commands:
     group = self.get_group(event)
 
     if group is None:
-      return self.reply_line(event, "這個群組尚未啟用discohook!\n使用指令 'discohook' 啟用")
+      return self.reply_line(event, f"這個群組尚未啟用discohook!\n{scripts.get_cmd('discohook')}")
     if event.source.user_id != group.manager:
       return self.reply_line(event, "只有管理員能夠使用指令!")
     
@@ -62,14 +62,20 @@ class Commands:
       manager=event.source.user_id,
     )
 
-    return self.reply_line(event, f"啟用成功\n將本bot加入好友便能在discord顯示你的姓名\n請到以下網址查看指令列表\n{SITE}")
+    return self.reply_line(event, f"啟用成功\n{ scripts.get_cmd('discoquery') }")
   
+  def handle_delete(self, event):
+    try:
+      Group.objects.get(id=event.source.group_id).delete()
+    except Group.DoesNotExist:
+      pass
+
   def handle_link(self, event):
     group = self.admin_checker(event)
     texts = event.message.text.split('\n')
     
     if len(texts) != 3:
-      return self.reply_line(event, f"指令格式有誤，請到以下網址查看指令列表\n{SITE}")
+      return self.reply_line(event, scripts.err_format)
     if len(texts[1]) > 20:
       return self.reply_line(event, f"名稱太長\n必須小於20字")
     
@@ -105,7 +111,7 @@ class Commands:
     texts = event.message.text.split('\n')
     
     if len(texts) != 2:
-      return self.reply_line(event, f"指令格式有誤，請到以下網址查看指令列表\n{SITE}")
+      return self.reply_line(event, scripts.err_format)
     
     name = texts[1]
     
@@ -121,7 +127,7 @@ class Commands:
       post(object.url, data={'content':f"(**{group_name}已解除連結**)"})
       object.delete()
     except Hook.DoesNotExist:
-      return self.reply_line(event, f"{name}不在已連結群組名單中\n使用指令 'discoquery' 取得已連結群組名單")
+      return self.reply_line(event, f"{name}不在已連結群組名單中\n{scripts.get_cmd('discoquery')}")
     
 
     return self.reply_line(event, f"成功解除連結\n將不會傳送訊至{name}")
@@ -137,14 +143,7 @@ class Commands:
     return self.reply_line(event, hook_list)
 
   def handle_help(self, event):
-    content = """指令列表 :
-    discohook : 啟用服務
-    discolink : 連結discord頻道
-    discounlink : 取消連結discord頻道
-    discoquery : 取得已連結的discord頻道列表
-    discohelp : 取得指令列表
-    """
-    content += f"\n請到以下網址查看詳細指令列表\n{SITE}"
+    content = scripts.get_help()
 
     return self.reply_line(event, content)
 

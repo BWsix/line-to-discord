@@ -1,6 +1,6 @@
 # Line to Discord
 
-暫時想不到名字的機器人  
+名為epico messenger的linebot  
 會將line群組的訊息轉發到discord上
 
 
@@ -13,20 +13,11 @@
 
 ## **👀 關於** <a name = "about"></a>
 
-這個機器人會將他所在line群組內的訊息轉發到discord群組裡  
-包含`圖片`, `影片`, `加入`, `離開`等訊息  
-並支援**單一line群組對多個discord頻道**  
-
-因為line的隱私政策  
-未經官方認證的linebot帳號在尚未被用戶加入好友前  
-無法透過userId取得任何使用者相關資料  
-所以如果**想要傳送到discord內的訊息顯示"line用戶名稱"的話**  
-需要**該line用戶有將本bot加入好友**
-
-後端是用`django`寫的  
-因為我自己架在`heroku`上所以也把`Procfile`等也許你用不到的檔案包進來了  
-
-也許最近會更新...吧
+epico messenger會將他所在line群組內的訊息轉發到discord群組裡  
+只需要在line群做設定即可使用  
+可傳送包含`圖片`, `影片`, `任何檔案`, `加入`, `離開`等訊息  
+不過line貼圖無法在discord顯示，只好以"**(sticker)**"替代  
+支援**單一line群組對多個discord頻道**  
 
 
 ## **📜 指令列表** <a name = "commands"></a>
@@ -45,6 +36,7 @@
   頻道名稱  (20字以內)
   Webhook網址
   ```
+  > ***完成設定後請將含有Webhook網址的訊息收回***
 
 - discounlink : 取消連結discord頻道  
   ```
@@ -62,11 +54,12 @@
   discohelp
   ```
 
+
 ## **👌 使用教學** <a name = "getting_started"></a>
 
 ### **啟用**
 
-1. 將本linebot (@920xuqql) ([QRcode](https://qr-official.line.me/sid/L/920xuqql.png)) 加入你的line群組
+1. 將epico messenger (@920xuqql) ([QRcode](https://qr-official.line.me/sid/L/920xuqql.png)) 加入你的line群組
 1. 在聊天訊息輸入 `discohook` 便啟用完成
 
 ### **連結discord頻道**
@@ -89,6 +82,8 @@
     班群
     https://discord.com/api/webhooks/00000/xxxxx
     ```
+    > ***完成設定後請將含有Webhook網址的訊息收回***
+
 
 ### **取消連結discord頻道**
 
