@@ -136,6 +136,18 @@ class Commands:
     
     return self.reply_line(event, hook_list)
 
+  def handle_help(self, event):
+    content = """指令列表 :
+    discohook : 啟用服務
+    discolink : 連結discord頻道
+    discounlink : 取消連結discord頻道
+    discoquery : 取得已連結的discord頻道列表
+    discohelp : 取得指令列表
+    """
+    content += f"\n請到以下網址查看詳細指令列表\n{SITE}"
+
+    return self.reply_line(event, content)
+
 
   def post(self, event, **kwargs):
     group = self.get_group(event)

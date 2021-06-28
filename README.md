@@ -57,6 +57,11 @@
   discoquery
   ```
 
+- discohelp : 取得指令列表
+  ```
+  discohelp
+  ```
+
 ## **👌 使用教學** <a name = "getting_started"></a>
 
 ### **啟用**
