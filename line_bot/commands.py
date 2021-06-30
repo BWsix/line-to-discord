@@ -4,6 +4,7 @@ from requests import post
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import LineBotApiError
 from linebot.models.send_messages import TextSendMessage
+from linebot.models.events import Event
 
 import environ
 env = environ.Env()
@@ -18,21 +19,24 @@ scripts = scripts()
 
 class Commands:
   
-  def reply_line(self, event, content):
+  def reply_line(self, event: Event, content: str):
+    """Sends `content` to source line group."""
     return line_bot_api.reply_message(
       event.reply_token,
       TextSendMessage(text=content))
   
-  def get_group(self, event) -> Group:
+  def get_group(self, event: Event) -> Group:
+    """return `None` if Group not in database"""
     try:
       return Group.objects.get(id=event.source.group_id)
     except Group.DoesNotExist:
       return None
 
-  def get_hooks(self, group) -> list:
+  def get_hooks(self, group: Group) -> list:
     return Hook.objects.filter(owner=group)
 
-  def admin_checker(self, event) -> Group:
+  def admin_checker(self, event: Event) -> Group:
+    """return `group` object if the event.source.user is an admin."""
     group = self.get_group(event)
 
     if group is None:
@@ -43,7 +47,8 @@ class Commands:
     return group
 
 
-  def handle_create(self, event):
+  def handle_create(self, event: Event):
+    """add source group_id to database."""
     try:
       Group.objects.get(id=event.source.group_id)
       return self.reply_line(event, "指令無效 : discohook已經啟用")
@@ -64,13 +69,14 @@ class Commands:
 
     return self.reply_line(event, f"啟用成功\n{ scripts.get_cmd('discoquery') }")
   
-  def handle_delete(self, event):
+  def handle_delete(self, event: Event):
     try:
       Group.objects.get(id=event.source.group_id).delete()
     except Group.DoesNotExist:
       pass
 
-  def handle_link(self, event):
+  def handle_link(self, event: Event):
+    """add discord webhook sent by user to database."""
     group = self.admin_checker(event)
     texts = event.message.text.split('\n')
     
@@ -106,7 +112,8 @@ class Commands:
     
     return self.reply_line(event, "加入完成\n現在開始所有傳送至此群組的訊息將會藉由剛才提供的連結一併傳送至discord群組")
   
-  def handle_unlink(self, event):
+  def handle_unlink(self, event: Event):
+    """delete discord webhook sent by user to database."""
     self.admin_checker(event)
     texts = event.message.text.split('\n')
     
@@ -132,7 +139,8 @@ class Commands:
 
     return self.reply_line(event, f"成功解除連結\n將不會傳送訊至{name}")
     
-  def handle_query(self, event):
+  def handle_query(self, event: Event):
+    """query all the groups in the database using group_id"""
     group = self.admin_checker(event)
     hooks = self.get_hooks(group)
 
@@ -142,13 +150,15 @@ class Commands:
     
     return self.reply_line(event, hook_list)
 
-  def handle_help(self, event):
+  def handle_help(self, event: Event):
+    """send list of all commands to source line group"""
     content = scripts.get_help()
 
     return self.reply_line(event, content)
 
 
-  def post(self, event, **kwargs):
+  def post(self, event: Event, **kwargs):
+    """post `data` and `file`(optional) to discord group"""
     group = self.get_group(event)
     if group is None:
       return 

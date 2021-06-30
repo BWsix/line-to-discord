@@ -26,13 +26,16 @@ def callback(request: HttpRequest):
   return HttpResponse("OK")
   
 
-def reply_line(event, content):
+def reply_line(event: Event, content: str):
   return line_bot_api.reply_message(
     event.reply_token,
     TextSendMessage(text=content)
   )
 
-def create_request_data(event, content=None) -> dict:
+def create_request_data(event: Event, content: str=None) -> dict:
+  """return a dict with request data
+  
+  Request data contains `content`, `username`, `avatar_url`"""
   try:
     request_data = line_bot_api.get_group_member_profile(event.source.group_id, event.source.user_id)
     username = request_data.display_name
@@ -54,7 +57,7 @@ def create_request_data(event, content=None) -> dict:
     'avatar_url' : avatar_url,
   }
 
-def get_binary(event):
+def get_binary(event: Event) -> bytes:
   content = line_bot_api.get_message_content(event.message.id)
 
   file = b""
@@ -65,7 +68,7 @@ def get_binary(event):
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+def handle_message(event: Event):
   if event.source.type == 'user':
     return reply_line(event, "hi, I'm an epico messenger😎")
 
@@ -87,57 +90,57 @@ def handle_message(event):
 
 
 @handler.add(MessageEvent, message=StickerMessage)
-def handle_sticker(event):
+def handle_sticker(event: Event):
   request_data = create_request_data(event, "**(sticker)**")
 
   cmd.post(event, data=request_data)
 
 @handler.add(MessageEvent, message=ImageMessage)
-def handle_image(event):
+def handle_image(event: Event):
   request_data = create_request_data(event)
   file = get_binary(event)
   
   cmd.post(event, data=request_data, files={'media.jpg':file})
 
 @handler.add(MessageEvent, message=VideoMessage)
-def handle_video(event):
+def handle_video(event: Event):
   request_data = create_request_data(event)
   file = get_binary(event)
 
   cmd.post(event, data=request_data, files={'media.mp4':file})
 
 @handler.add(MessageEvent, message=AudioMessage)
-def handle_audio(event):
+def handle_audio(event: Event):
   request_data = create_request_data(event)
   file = get_binary(event)
 
   cmd.post(event, data=request_data, files={'media.mp3':file})
 
 @handler.add(MessageEvent, message=FileMessage)
-def hendle_file(event):
+def hendle_file(event: Event):
   request_data = create_request_data(event)
   file = get_binary(event)
 
   cmd.post(event, data=request_data, files={event.message.file_name:file})
 
 @handler.add(MemberJoinedEvent)
-def handle_member_joined(event):
+def handle_member_joined(event: Event):
   request_data = create_request_data(event, "**(joined the group)**")
   
   cmd.post(event, data=request_data)
 
 @handler.add(MemberLeftEvent)
-def handle_member_left(event):
+def handle_member_left(event: Event):
   request_data = create_request_data(event, "**(left the group)**")
 
   cmd.post(event, data=request_data)
 
 @handler.add(JoinEvent)
-def handle_join(event):
+def handle_join(event: Event):
   content = scripts.welcome()
 
   return reply_line(event, content)
 
 @handler.add(LeaveEvent)
-def handle_leave(event):
+def handle_leave(event: Event):
   cmd.handle_delete(event)
