@@ -1,6 +1,6 @@
 # Line to Discord
 
-名為epico messenger的linebot  
+名為epico messenger (@920xuqql) ([QRcode](https://qr-official.line.me/sid/L/920xuqql.png)) 的linebot  
 會將line群組的訊息轉發到discord上
 
 
