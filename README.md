@@ -1,7 +1,14 @@
-# Line to Discord
+<p align="center">
+  <img src="https://i.imgur.com/cElESJl.png">
+</p>
+<h3 align="center">Line to Discord</h3>
+
+---
 
 名為epico messenger (@920xuqql) ([QRcode](https://qr-official.line.me/sid/L/920xuqql.png)) 的linebot  
 會將line群組的訊息轉發到discord上
+
+功能展示影片：https://youtu.be/5ASnmSHMXow
 
 
 ## **🧐 內容**
