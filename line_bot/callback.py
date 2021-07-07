@@ -26,7 +26,7 @@ def callback(request: HttpRequest):
   return HttpResponse("OK")
   
 
-def reply_line(event: Event, content: str):
+def reply_line(event: Event, content: str) -> None:
   return line_bot_api.reply_message(
     event.reply_token,
     TextSendMessage(text=content)

@@ -19,7 +19,7 @@ scripts = scripts()
 
 class Commands:
   
-  def reply_line(self, event: Event, content: str):
+  def reply_line(self, event: Event, content: str) -> None:
     """Sends `content` to source line group."""
     return line_bot_api.reply_message(
       event.reply_token,
@@ -32,7 +32,7 @@ class Commands:
     except Group.DoesNotExist:
       return None
 
-  def get_hooks(self, group: Group) -> list:
+  def get_hooks(self, group: Group) -> list[Hook]:
     return Hook.objects.filter(owner=group)
 
   def admin_checker(self, event: Event) -> Group:
@@ -47,7 +47,7 @@ class Commands:
     return group
 
 
-  def handle_create(self, event: Event):
+  def handle_create(self, event: Event) -> None:
     """add source group_id to database."""
     try:
       Group.objects.get(id=event.source.group_id)
@@ -69,13 +69,13 @@ class Commands:
 
     return self.reply_line(event, f"啟用成功\n{ scripts.get_cmd('discoquery') }")
   
-  def handle_delete(self, event: Event):
+  def handle_delete(self, event: Event) -> None:
     try:
       Group.objects.get(id=event.source.group_id).delete()
     except Group.DoesNotExist:
       pass
 
-  def handle_link(self, event: Event):
+  def handle_link(self, event: Event) -> None:
     """add discord webhook sent by user to database."""
     group = self.admin_checker(event)
     texts = event.message.text.split('\n')
@@ -112,7 +112,7 @@ class Commands:
     
     return self.reply_line(event, "加入完成\n現在開始所有傳送至此群組的訊息將會藉由剛才提供的連結一併傳送至discord群組")
   
-  def handle_unlink(self, event: Event):
+  def handle_unlink(self, event: Event) -> None:
     """delete discord webhook sent by user to database."""
     self.admin_checker(event)
     texts = event.message.text.split('\n')
@@ -139,7 +139,7 @@ class Commands:
 
     return self.reply_line(event, f"成功解除連結\n將不會傳送訊至{name}")
     
-  def handle_query(self, event: Event):
+  def handle_query(self, event: Event) -> None:
     """query all the groups in the database using group_id"""
     group = self.admin_checker(event)
     hooks = self.get_hooks(group)
@@ -150,22 +150,20 @@ class Commands:
     
     return self.reply_line(event, hook_list)
 
-  def handle_help(self, event: Event):
+  def handle_help(self, event: Event) -> None:
     """send list of all commands to source line group"""
     content = scripts.get_help()
 
     return self.reply_line(event, content)
 
 
-  def post(self, event: Event, **kwargs):
+  def post(self, event: Event, **kwargs) -> None:
     """post `data` and `file`(optional) to discord group"""
     group = self.get_group(event)
-    if group is None:
-      return 
+    if group is None: return 
     
     hooks = self.get_hooks(group)
-    if hooks is None:
-      return
+    if hooks is None: return
      
     for hook in hooks:
       try:
