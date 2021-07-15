@@ -8,7 +8,7 @@
 名為epico messenger (@920xuqql) ([QRcode](https://qr-official.line.me/sid/L/920xuqql.png)) 的linebot  
 會將line群組的訊息轉發到discord上
 
-功能展示影片：https://youtu.be/5ASnmSHMXow
+功能展示影片：https://youtu.be/UCeVlzMFpSE
 
 
 ## **🧐 內容**
